@@ -1,10 +1,14 @@
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
 
     @State private var viewModel = HomeViewModel()
     @State private var searchText = ""
     @State private var showingAddTask = false
+    
+    @Query(sort: \Task.createdAt, order: .reverse)
+    private var tasks: [Task]
 
     var body: some View {
 
@@ -27,7 +31,21 @@ struct HomeView: View {
 
                         SearchBar(text: $searchText)
 
-                        EmptyState()
+                        if tasks.isEmpty {
+
+                            EmptyState()
+
+                        } else {
+
+                            LazyVStack(spacing: AppSpacing.medium) {
+
+                                ForEach(tasks) { task in
+
+                                    TaskRow(task: task)
+
+                                }
+                            }
+                        }
                     }
                     .padding()
                 }

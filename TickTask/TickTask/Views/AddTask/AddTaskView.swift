@@ -2,16 +2,17 @@
 //  AddTaskView.swift
 //  TickTask
 //
-//  Created by Yug on 7/12/26.
-//
 
 import SwiftUI
+import SwiftData
 
 struct AddTaskView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     @State private var viewModel = TaskViewModel()
+
     var body: some View {
 
         NavigationStack {
@@ -43,10 +44,8 @@ struct AddTaskView: View {
 
                     Picker("Priority", selection: $viewModel.priority) {
 
-                        ForEach(Priority.allCases, id: \.self) {
-
-                            Text($0.rawValue)
-
+                        ForEach(Priority.allCases, id: \.self) { priority in
+                            Text(priority.rawValue)
                         }
                     }
                 }
@@ -55,25 +54,20 @@ struct AddTaskView: View {
 
                     Picker("Category", selection: $viewModel.category) {
 
-                        ForEach(Category.allCases, id: \.self) {
-
-                            Text($0.rawValue)
-
+                        ForEach(Category.allCases, id: \.self) { category in
+                            Text(category.rawValue)
                         }
                     }
                 }
             }
             .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)
-
             .toolbar {
 
                 ToolbarItem(placement: .topBarLeading) {
 
                     Button("Cancel") {
-
                         dismiss()
-
                     }
                 }
 
@@ -81,10 +75,20 @@ struct AddTaskView: View {
 
                     Button("Save") {
 
-                        dismiss()
+                        let task = Task(
+                            title: viewModel.title,
+                            notes: viewModel.notes,
+                            dueDate: viewModel.hasDueDate ? viewModel.dueDate : nil,
+                            priority: viewModel.priority,
+                            category: viewModel.category
+                        )
 
+                        modelContext.insert(task)
+
+                        dismiss()
                     }
-                    .disabled(viewModel.isSaveDisabled)                }
+                    .disabled(viewModel.isSaveDisabled)
+                }
             }
         }
     }
