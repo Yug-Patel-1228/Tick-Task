@@ -2,17 +2,31 @@
 //  FloatingButton.swift
 //  TickTask
 //
-//  Created by Yug on 7/12/26.
-//
 
 import SwiftUI
 
 struct FloatingButton: View {
+
+    let action: () -> Void
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+
+        Button(action: action) {
+
+            Image(systemName: AppSymbols.add)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 60, height: 60)
+                .background(AppColors.accent)
+                .clipShape(Circle())
+                .shadow(radius: 8)
+        }
     }
 }
 
 #Preview {
-    FloatingButton()
+
+    FloatingButton {
+
+    }
 }

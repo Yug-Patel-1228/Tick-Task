@@ -1,61 +1,53 @@
-//
-//  ContentView.swift
-//  TickTask
-//
-//  Created by Yug on 7/12/26.
-//
-
 import SwiftUI
-import SwiftData
 
-struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+struct HomeView: View {
+
+    @State private var viewModel = HomeViewModel()
+    @State private var searchText = ""
+    @State private var showingAddTask = false
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
+        NavigationStack {
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            ZStack(alignment: .bottomTrailing) {
+
+                ScrollView {
+
+                    VStack(alignment: .leading,
+                           spacing: AppSpacing.large) {
+
+                        Text(viewModel.greeting)
+                            .font(AppTypography.title)
+
+                        ProgressCard(
+                            completedTasks: viewModel.completedTasks,
+                            totalTasks: viewModel.totalTasks
+                        )
+
+                        SearchBar(text: $searchText)
+
+                        EmptyState()
+                    }
+                    .padding()
+                }
+
+                FloatingButton {
+                    showingAddTask=true
+
+                }
+                .padding(24)
+            }
+            .navigationTitle("Today")
+            .sheet(isPresented: $showingAddTask) {
+
+                AddTaskView()
+
             }
         }
     }
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+    HomeView()
 }

@@ -2,7 +2,28 @@
 //  AppSymbols.swift
 //  TickTask
 //
-//  Created by Yug on 7/12/26.
-//
 
 import Foundation
+
+enum AppSymbols {
+
+    static let add = "plus"
+
+    static let search = "magnifyingglass"
+
+    static let completed = "checkmark.circle.fill"
+
+    static let incomplete = "circle"
+
+    static let calendar = "calendar"
+
+    static let flag = "flag.fill"
+
+    static let delete = "trash"
+
+    static let settings = "gearshape"
+
+    static let empty = "checkmark.circle"
+
+    static let chevron = "chevron.right"
+}
