@@ -8,12 +8,8 @@ import Foundation
 @Observable
 final class HomeViewModel {
 
-    var completedTasks: Int = 0
-    var totalTasks: Int = 0
-
-    var progress: Double {
-        guard totalTasks > 0 else { return 0 }
-        return Double(completedTasks) / Double(totalTasks)
+    func completedTasks(from tasks: [Task]) -> Int {
+        tasks.filter(\.isCompleted).count
     }
 
     var greeting: String {

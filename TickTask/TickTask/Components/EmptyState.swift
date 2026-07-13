@@ -7,6 +7,17 @@ import SwiftUI
 
 struct EmptyState: View {
 
+    let title: String
+    let message: String
+
+    init(
+        title: String = "No Tasks",
+        message: String = "Tap + to add your first task"
+    ) {
+        self.title = title
+        self.message = message
+    }
+
     var body: some View {
 
         VStack(spacing: AppSpacing.large) {
@@ -17,10 +28,10 @@ struct EmptyState: View {
 
             VStack(spacing: AppSpacing.small) {
 
-                Text("No Tasks Yet")
+                Text(title)
                     .font(AppTypography.title2)
 
-                Text("Tap the + button to create your first task.")
+                Text(message)
                     .font(AppTypography.body)
                     .foregroundStyle(AppColors.textSecondary)
                     .multilineTextAlignment(.center)

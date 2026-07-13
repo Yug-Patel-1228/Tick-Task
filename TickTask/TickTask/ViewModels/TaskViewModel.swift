@@ -19,8 +19,25 @@ final class TaskViewModel {
 
     var priority: Priority = .medium
     var category: Category = .personal
+    var color: TaskColor = .blue
 
     var isSaveDisabled: Bool {
         title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    init(task: Task? = nil) {
+        guard let task else { return }
+
+        title = task.title
+        notes = task.notes
+        hasDueDate = task.dueDate != nil
+        dueDate = task.dueDate ?? Date()
+        priority = task.priority
+        category = task.category
+        color = task.color
+    }
+
+    var cleanTitle: String {
+        title.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

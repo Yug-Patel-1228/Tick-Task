@@ -4,6 +4,8 @@ import SwiftData
 @main
 struct TickTaskApp: App {
 
+    @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled = false
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Task.self
@@ -24,6 +26,7 @@ struct TickTaskApp: App {
     var body: some Scene {
         WindowGroup {
             HomeView()
+                .preferredColorScheme(isDarkModeEnabled ? .dark : nil)
         }
         .modelContainer(sharedModelContainer)
     }

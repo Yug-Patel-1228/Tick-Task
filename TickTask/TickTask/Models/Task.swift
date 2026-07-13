@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Task {
+final class Task: Identifiable {
 
     var id: UUID
     var title: String
@@ -20,6 +20,7 @@ final class Task {
 
     var priority: Priority
     var category: Category
+    var color: TaskColor
 
     var isCompleted: Bool
 
@@ -29,6 +30,7 @@ final class Task {
         dueDate: Date? = nil,
         priority: Priority = .medium,
         category: Category = .personal,
+        color: TaskColor = .blue,
         isCompleted: Bool = false
     ) {
         self.id = UUID()
@@ -38,6 +40,7 @@ final class Task {
         self.dueDate = dueDate
         self.priority = priority
         self.category = category
+        self.color = color
         self.isCompleted = isCompleted
     }
 }

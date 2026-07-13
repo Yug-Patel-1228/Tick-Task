@@ -7,7 +7,7 @@ import Foundation
 
 enum AppSymbols {
 
-    static let add = "plus"
+    static let add = "plus.circle.fill"
 
     static let search = "magnifyingglass"
 
@@ -24,6 +24,8 @@ enum AppSymbols {
     static let settings = "gearshape"
 
     static let empty = "checkmark.circle"
+
+    static let duplicate = "plus.square.on.square"
 
     static let chevron = "chevron.right"
 }

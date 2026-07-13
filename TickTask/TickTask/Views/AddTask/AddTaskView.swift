@@ -18,47 +18,7 @@ struct AddTaskView: View {
         NavigationStack {
 
             Form {
-
-                Section("Task") {
-
-                    TextField("Title", text: $viewModel.title)
-
-                    TextField("Notes", text: $viewModel.notes, axis: .vertical)
-                }
-
-                Section("Due Date") {
-
-                    Toggle("Set Due Date", isOn: $viewModel.hasDueDate)
-
-                    if viewModel.hasDueDate {
-
-                        DatePicker(
-                            "Due Date",
-                            selection: $viewModel.dueDate,
-                            displayedComponents: .date
-                        )
-                    }
-                }
-
-                Section("Priority") {
-
-                    Picker("Priority", selection: $viewModel.priority) {
-
-                        ForEach(Priority.allCases, id: \.self) { priority in
-                            Text(priority.rawValue)
-                        }
-                    }
-                }
-
-                Section("Category") {
-
-                    Picker("Category", selection: $viewModel.category) {
-
-                        ForEach(Category.allCases, id: \.self) { category in
-                            Text(category.rawValue)
-                        }
-                    }
-                }
+                TaskFormFields(viewModel: viewModel)
             }
             .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)
@@ -76,14 +36,16 @@ struct AddTaskView: View {
                     Button("Save") {
 
                         let task = Task(
-                            title: viewModel.title,
+                            title: viewModel.cleanTitle,
                             notes: viewModel.notes,
                             dueDate: viewModel.hasDueDate ? viewModel.dueDate : nil,
                             priority: viewModel.priority,
-                            category: viewModel.category
+                            category: viewModel.category,
+                            color: viewModel.color
                         )
 
                         modelContext.insert(task)
+                        Haptics.success()
 
                         dismiss()
                     }

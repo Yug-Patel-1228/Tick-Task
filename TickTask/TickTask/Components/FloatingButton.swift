@@ -14,13 +14,14 @@ struct FloatingButton: View {
         Button(action: action) {
 
             Image(systemName: AppSymbols.add)
-                .font(.title2.weight(.bold))
+                .font(.system(size: 56, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 60, height: 60)
-                .background(AppColors.accent)
+                .background(AppColors.accent.gradient)
                 .clipShape(Circle())
                 .shadow(radius: 8)
         }
+        .accessibilityLabel("Add Task")
     }
 }
 

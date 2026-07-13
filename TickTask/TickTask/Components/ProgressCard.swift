@@ -21,18 +21,27 @@ struct ProgressCard: View {
 
         VStack(alignment: .leading, spacing: AppSpacing.medium) {
 
-            Text("Today's Progress")
-                .font(AppTypography.title2)
+            HStack {
+                Text("Today's Progress")
+                    .font(AppTypography.title2)
 
-            Text("\(completedTasks) of \(totalTasks) tasks completed")
+                Spacer()
+
+                Text("\(completedTasks) / \(totalTasks)")
+                    .font(AppTypography.headline)
+                    .foregroundStyle(AppColors.accent)
+            }
+
+            Text("\(completedTasks) of \(totalTasks) completed today")
                 .font(AppTypography.subheadline)
                 .foregroundStyle(AppColors.textSecondary)
 
             ProgressView(value: progress)
                 .tint(AppColors.accent)
+                .animation(.easeInOut(duration: 0.28), value: progress)
         }
         .padding(AppSpacing.cardPadding)
-        .background(AppColors.card)
+        .background(.thinMaterial)
         .clipShape(
             RoundedRectangle(
                 cornerRadius: AppSpacing.cornerRadius,
