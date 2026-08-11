@@ -8,8 +8,12 @@ import Foundation
 @Observable
 final class HomeViewModel {
 
-    func completedTasks(from tasks: [Task]) -> Int {
-        tasks.filter(\.isCompleted).count
+    func visibleTasks(from tasks: [Task], searchText: String, filter: TaskFilter) -> [Task] {
+        TaskRules.filteredAndSorted(tasks: tasks, searchText: searchText, filter: filter)
+    }
+
+    func dashboardSummary(from tasks: [Task]) -> DashboardSummary {
+        TaskRules.dashboardSummary(tasks: tasks)
     }
 
     var greeting: String {

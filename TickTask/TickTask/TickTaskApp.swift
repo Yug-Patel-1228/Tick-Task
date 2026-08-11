@@ -4,30 +4,71 @@ import SwiftData
 @main
 struct TickTaskApp: App {
 
-    @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled = false
+    @AppStorage("appearance") private var appearanceRawValue = AppearanceOption.system.rawValue
 
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Task.self
-        ])
+    private let sharedModelContainer: ModelContainer?
+    private let startupErrorMessage: String?
 
-        let configuration = ModelConfiguration(schema: schema)
-
+    init() {
         do {
-            return try ModelContainer(
-                for: schema,
-                configurations: [configuration]
-            )
+            sharedModelContainer = try Self.makeModelContainer()
+            startupErrorMessage = nil
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            sharedModelContainer = nil
+            startupErrorMessage = error.localizedDescription
         }
-    }()
+    }
+
+    private static func makeModelContainer() throws -> ModelContainer {
+        let schema = Schema(versionedSchema: TickTaskSchemaV3.self)
+        
+        let isUITestMode = ProcessInfo.processInfo.arguments.contains("UITestMode")
+        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: isUITestMode)
+
+        return try ModelContainer(
+            for: schema,
+            migrationPlan: TickTaskMigrationPlan.self,
+            configurations: [configuration]
+        )
+    }
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .preferredColorScheme(isDarkModeEnabled ? .dark : nil)
+            Group {
+                if let sharedModelContainer {
+                    HomeView()
+                        .modelContainer(sharedModelContainer)
+                } else {
+                    PersistenceUnavailableView(message: startupErrorMessage)
+                }
+            }
+                .preferredColorScheme(appearance.colorScheme)
+                .animation(.easeInOut(duration: 0.25), value: appearanceRawValue)
         }
-        .modelContainer(sharedModelContainer)
+    }
+
+    private var appearance: AppearanceOption {
+        AppearanceOption(rawValue: appearanceRawValue) ?? .system
+    }
+}
+
+private struct PersistenceUnavailableView: View {
+    let message: String?
+
+    var body: some View {
+        ContentUnavailableView {
+            Label("Tasks Unavailable", systemImage: "externaldrive.trianglebadge.exclamationmark")
+        } description: {
+            Text("TickTask could not open the local task database. Your existing task data has not been deleted.")
+        } actions: {
+            if let message, !message.isEmpty {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .textSelection(.enabled)
+                    .padding(.horizontal)
+            }
+        }
     }
 }

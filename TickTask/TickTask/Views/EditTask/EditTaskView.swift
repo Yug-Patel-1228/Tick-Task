@@ -34,10 +34,15 @@ struct EditTaskView: View {
                         task.priority = viewModel.priority
                         task.category = viewModel.category
                         task.color = viewModel.color
+                        task.recurrence = viewModel.recurrence
+                        task.reminder = viewModel.reminder
+                        task.reminderDate = viewModel.reminder == .specificDate ? viewModel.reminderDate : nil
+                        NotificationService.shared.scheduleNotification(for: task)
                         Haptics.success()
                         dismiss()
                     }
                     .disabled(viewModel.isSaveDisabled)
+                    .accessibilityIdentifier("SaveTaskButton")
                 }
             }
         }
