@@ -28,4 +28,14 @@ enum AppSymbols {
     static let duplicate = "plus.square.on.square"
 
     static let chevron = "chevron.right"
+
+    static let pin = "pin.fill"
+
+    static let unpin = "pin.slash.fill"
+
+    static let statistics = "chart.bar.fill"
+
+    static let bell = "bell.fill"
+
+    static let recurrence = "repeat"
 }

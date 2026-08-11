@@ -12,6 +12,7 @@ struct TaskRow: View {
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onDuplicate: () -> Void
+    let onPin: () -> Void
 
     var body: some View {
 
@@ -25,19 +26,30 @@ struct TaskRow: View {
                     .scaleEffect(task.isCompleted ? 1.08 : 1)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(task.isCompleted ? "Mark \(task.title) incomplete" : "Complete \(task.title)")
 
             VStack(alignment: .leading, spacing: 6) {
 
-                Text(task.title)
-                    .font(AppTypography.headline)
-                    .strikethrough(task.isCompleted)
-                    .foregroundStyle(task.isCompleted ? AppColors.textSecondary : AppColors.textPrimary)
+                HStack(spacing: 6) {
+                    if task.isPinned {
+                        Image(systemName: AppSymbols.pin)
+                            .font(.caption)
+                            .foregroundStyle(AppColors.accent)
+                            .accessibilityLabel("Pinned")
+                    }
+
+                    Text(task.title)
+                        .font(AppTypography.headline)
+                        .strikethrough(task.isCompleted)
+                        .foregroundStyle(task.isCompleted ? AppColors.textSecondary : AppColors.textPrimary)
+                        .lineLimit(2)
+                }
 
                 HStack(spacing: 8) {
 
-                    Text(task.category.rawValue)
+                    Label(task.category.rawValue, systemImage: task.category.symbol)
                         .font(AppTypography.caption)
-                        .foregroundStyle(AppColors.textSecondary)
+                        .foregroundStyle(task.category.color)
 
                     if let dueDate = task.dueDate {
 
@@ -55,7 +67,18 @@ struct TaskRow: View {
                     Text(task.priority.rawValue)
                         .font(AppTypography.caption)
                         .foregroundStyle(task.priority.color)
+
+                    if task.recurrence != .never {
+                        Text("•")
+                            .foregroundStyle(AppColors.textSecondary)
+
+                        Label(task.recurrence.rawValue, systemImage: AppSymbols.recurrence)
+                            .font(AppTypography.caption)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
                 }
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
             }
 
             Spacer()
@@ -74,6 +97,10 @@ struct TaskRow: View {
         )
         .opacity(task.isCompleted ? 0.72 : 1)
         .contextMenu {
+            Button(action: onToggleComplete) {
+                Label(task.isCompleted ? "Mark Incomplete" : "Complete", systemImage: task.isCompleted ? AppSymbols.incomplete : AppSymbols.completed)
+            }
+
             Button(action: onEdit) {
                 Label("Edit", systemImage: "pencil")
             }
@@ -82,11 +109,16 @@ struct TaskRow: View {
                 Label("Duplicate", systemImage: AppSymbols.duplicate)
             }
 
+            Button(action: onPin) {
+                Label(task.isPinned ? "Unpin" : "Pin", systemImage: task.isPinned ? AppSymbols.unpin : AppSymbols.pin)
+            }
+
             Button(role: .destructive, action: onDelete) {
                 Label("Delete", systemImage: AppSymbols.delete)
             }
         }
-        .onTapGesture(count: 2, perform: onEdit)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(task.title), \(task.category.rawValue), \(task.priority.rawValue)")
     }
 }
 
@@ -103,7 +135,8 @@ struct TaskRow: View {
         onToggleComplete: {},
         onEdit: {},
         onDelete: {},
-        onDuplicate: {}
+        onDuplicate: {},
+        onPin: {}
     )
     .padding()
 }

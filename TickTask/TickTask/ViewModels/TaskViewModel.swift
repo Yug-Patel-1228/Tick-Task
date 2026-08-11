@@ -20,12 +20,22 @@ final class TaskViewModel {
     var priority: Priority = .medium
     var category: Category = .personal
     var color: TaskColor = .blue
+    var recurrence: RecurrenceRule = .never
+    var reminder: ReminderKind = .none
+    var reminderDate = Date()
 
     var isSaveDisabled: Bool {
         title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    init(task: Task? = nil) {
+    init(
+        task: Task? = nil,
+        defaultPriority: Priority = .medium,
+        defaultCategory: Category = .personal
+    ) {
+        priority = defaultPriority
+        category = defaultCategory
+
         guard let task else { return }
 
         title = task.title
@@ -35,6 +45,9 @@ final class TaskViewModel {
         priority = task.priority
         category = task.category
         color = task.color
+        recurrence = task.recurrence
+        reminder = task.reminder
+        reminderDate = task.reminderDate ?? task.dueDate ?? Date()
     }
 
     var cleanTitle: String {

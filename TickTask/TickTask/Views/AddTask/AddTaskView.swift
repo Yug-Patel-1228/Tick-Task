@@ -12,6 +12,8 @@ struct AddTaskView: View {
     @Environment(\.modelContext) private var modelContext
 
     @State private var viewModel = TaskViewModel()
+    @AppStorage("defaultPriority") private var defaultPriorityRawValue = Priority.medium.rawValue
+    @AppStorage("defaultCategory") private var defaultCategoryRawValue = Category.personal.rawValue
 
     var body: some View {
 
@@ -41,17 +43,27 @@ struct AddTaskView: View {
                             dueDate: viewModel.hasDueDate ? viewModel.dueDate : nil,
                             priority: viewModel.priority,
                             category: viewModel.category,
-                            color: viewModel.color
+                            color: viewModel.color,
+                            recurrence: viewModel.recurrence,
+                            reminder: viewModel.reminder,
+                            reminderDate: viewModel.reminder == .specificDate ? viewModel.reminderDate : nil
                         )
 
                         modelContext.insert(task)
+                        NotificationService.shared.scheduleNotification(for: task)
                         Haptics.success()
 
                         dismiss()
                     }
                     .disabled(viewModel.isSaveDisabled)
+                    .accessibilityIdentifier("SaveTaskButton")
                 }
             }
+        }
+        .onAppear {
+            guard viewModel.title.isEmpty, viewModel.notes.isEmpty else { return }
+            viewModel.priority = Priority(rawValue: defaultPriorityRawValue) ?? .medium
+            viewModel.category = Category(rawValue: defaultCategoryRawValue) ?? .personal
         }
     }
 }

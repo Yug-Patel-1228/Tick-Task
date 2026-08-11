@@ -20,6 +20,7 @@ struct SearchBar: View {
 
             TextField("Search tasks", text: $text)
                 .textFieldStyle(.plain)
+                .accessibilityIdentifier("SearchTasksTextField")
 
             if !text.isEmpty {
 
@@ -33,6 +34,7 @@ struct SearchBar: View {
                         .foregroundStyle(AppColors.textSecondary)
 
                 }
+                .accessibilityLabel("Clear Search")
             }
         }
         .padding(.horizontal, AppSpacing.medium)
